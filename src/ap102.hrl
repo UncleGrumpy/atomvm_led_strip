@@ -22,4 +22,3 @@
 -define(SPI_CLOCK_HZ, 40000000).
 -define(LED_DEVICE_NAME, ap102).
 -define(COLOR_ORDER, {Blue, Green, Red}).
-
