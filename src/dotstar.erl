@@ -1,5 +1,5 @@
 %%
-%% Copyright (c) 2023 <winford@object.stream>
+%% Copyright (c) 2024 <winford@object.stream>
 %% All rights reserved.
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
@@ -61,13 +61,8 @@ init(Di_pin, Ci_pin, Dots) ->
 write_dot(Red, Green, Blue, Illumination) ->
     %% fast and dirty way to convert 0-100 Illumination into 5-bit Brightness. 
     Bright = (Illumination * 31) div 97,
-    Bright_8bits = ?LED_BRIGHTNESS_MSB bor Bright,
-    LED_32bits = Bright_8bits bsl 24 bor get_color_24bits(?COLOR_ORDER),
-    Data64 = LED_32bits bsl 32 bor ?SPI_END_FRAME,
-    Dot_96bits = ?SPI_START_FRAME bsl 64 bor Data64,
-    % Intro_frame = ?SPI_START_FRAME,
-    % End_frame = ?SPI_END_FRAME,
-    Dot_data = <<Dot_96bits:96>>,
+    Dot_data = <<?SPI_START_FRAME:32, ?ILUM_START_BITS:3, Bright:5,
+               Blue:8, Green:8, Red:8, ?SPI_END_FRAME:32>>,
     Transaction = #{command => 0, address => 0, write_data => Dot_data, write_bits => 96, read_bits => 0},
     spi:write(erlang:whereis(dotstar), ?LED_DEVICE_NAME, Transaction).
 
@@ -91,20 +86,16 @@ write_dot_hsv(H, S, V) ->
     Diff = H rem 60,
     RGB_adj = ((RGB_max - RGB_min) * Diff) div 60,
     Sextant = H div 60,
-    case Sextant of
-        0 ->
-            write_dot(RGB_max, RGB_min + RGB_adj, RGB_min, I);
-        1 ->
-            write_dot(RGB_max - RGB_adj, RGB_max, RGB_min, I);
-        2 ->
-            write_dot(RGB_min, RGB_max, RGB_min + RGB_adj, I);
-        3 ->
-            write_dot(RGB_min, RGB_max - RGB_adj, RGB_max, I);
-        4 ->
-            write_dot(RGB_min + RGB_adj, RGB_min, RGB_max, I);
-        _ ->
-            write_dot(RGB_max, RGB_min, RGB_max - RGB_adj, I)
-    end.
+    {R, G, B} =
+        case Sextant of
+            0 -> {RGB_max, RGB_min + RGB_adj, RGB_min};
+            1 -> {RGB_max - RGB_adj, RGB_max, RGB_min};
+            2 -> {RGB_min, RGB_max, RGB_min + RGB_adj};
+            3 -> {RGB_min, RGB_max - RGB_adj, RGB_max};
+            4 -> {RGB_min + RGB_adj, RGB_min, RGB_max};
+            _ -> {RGB_max, RGB_min, RGB_max - RGB_adj}
+    end,
+    write_dot(R, G, B, I).
 
 %% private
 get_color_24bits({C0, C1, C2}) ->
