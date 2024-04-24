@@ -14,6 +14,9 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
+%
+% SPDX-License-Identifier: Apache-2.0 OR LGPL-2.1-or-later
+%
 
 -define(SPI_START_FRAME, 16#00000000).
 -define(SPI_END_FRAME, 16#FFFFFFFF).
@@ -22,4 +25,3 @@
 -define(SPI_CLOCK_HZ, 40000000).
 -define(LED_DEVICE_NAME, ap102).
 -define(COLOR_ORDER, {Blue, Green, Red}).
-

@@ -14,6 +14,10 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
+%
+% SPDX-License-Identifier: Apache-2.0 OR LGPL-2.1-or-later
+%
+
 -module(dotstar).
 
 -include("ap102.hrl").
@@ -28,7 +32,7 @@
 % -type dot() :: non_neg_integer().
 -type illumination() :: 0..100.
 
--spec init(Di_pin :: pin(), Ci_pin :: pin(), Dots :: non_neg_integer()) -> ok. 
+-spec init(Di_pin :: pin(), Ci_pin :: pin(), Dots :: non_neg_integer()) -> ok.
 init(Di_pin, Ci_pin, Dots) ->
     SPIConfig = [
         {bus_config, [
@@ -57,18 +61,22 @@ init(Di_pin, Ci_pin, Dots) ->
             erlang:error(unimplemented)
     end.
 
--spec write_dot(Red :: red(), Green :: green(), Blue :: blue(),  Illumination :: illumination()) -> ok.
+-spec write_dot(Red :: red(), Green :: green(), Blue :: blue(), Illumination :: illumination()) ->
+    ok.
 write_dot(Red, Green, Blue, Illumination) ->
-    %% fast and dirty way to convert 0-100 Illumination into 5-bit Brightness. 
+    %% fast and dirty way to convert 0-100 Illumination into 5-bit Brightness.
     Bright = (Illumination * 31) div 97,
-    Dot_data = <<?SPI_START_FRAME:32, ?ILUM_START_BITS:3, Bright:5,
-               Blue:8, Green:8, Red:8, ?SPI_END_FRAME:32>>,
-    Transaction = #{command => 0, address => 0, write_data => Dot_data, write_bits => 96, read_bits => 0},
+    Dot_data =
+        <<?SPI_START_FRAME:32, ?ILUM_START_BITS:3, Bright:5, Blue:8, Green:8, Red:8,
+            ?SPI_END_FRAME:32>>,
+    Transaction = #{
+        command => 0, address => 0, write_data => Dot_data, write_bits => 96, read_bits => 0
+    },
     spi:write(erlang:whereis(dotstar), ?LED_DEVICE_NAME, Transaction).
 
 % -spec set_dot(Dot :: dot(), Red :: red(), Green :: green(), Blue :: blue(),  Illumination :: illumination()) -> ok.
 % set_dot(Dot, Red, Green, Blue, Illumination) ->
-%     %% fast and dirty way to convert 0-100 Illumination into 5-bit Brightness. 
+%     %% fast and dirty way to convert 0-100 Illumination into 5-bit Brightness.
 %     Bright = (Illumination * 31) div 97,
 %     Bright_8bits = ?LED_BRIGHTNESS_MSB bor Bright,
 %     LED_32bits = Bright_8bits bsl 24 bor get_color_24bits(?COLOR_ORDER),
@@ -94,11 +102,5 @@ write_dot_hsv(H, S, V) ->
             3 -> {RGB_min, RGB_max - RGB_adj, RGB_max};
             4 -> {RGB_min + RGB_adj, RGB_min, RGB_max};
             _ -> {RGB_max, RGB_min, RGB_max - RGB_adj}
-    end,
+        end,
     write_dot(R, G, B, I).
-
-%% private
-get_color_24bits({C0, C1, C2}) ->
-    T = C1 bsl 8 bor C2,
-    C0 bsl 16 bor T.
-
