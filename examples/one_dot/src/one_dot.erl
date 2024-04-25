@@ -24,7 +24,7 @@
 
 -export([start/0]).
 
--define(SLEEP_MS, 15).
+-define(SLEEP_MS, 0).
 
 start() ->
     ok = dotstar:init(?LED_DI_PIN, ?LED_CI_PIN, ?TOTAL_DOTS),
@@ -54,17 +54,16 @@ hsv_sweep(359, S, 100) ->
 hsv_sweep(359, S, V) ->
     dotstar:write_dot_hsv(359, S, V),
     timer:sleep(?SLEEP_MS),
-    hsv_sweep(0, S, V + 2);
+    hsv_sweep(0, S, V + 10);
 hsv_sweep(H, S, V) ->
     dotstar:write_dot_hsv(H, S, V),
     timer:sleep(?SLEEP_MS),
     hsv_sweep((H + 1) rem 360, S, V).
 
 random_loop() ->
-    Rand = crypto:strong_rand_bytes(5),
-    <<R:8, G:8, B:8, I:8, T:8>> = Rand,
+    Rand = crypto:strong_rand_bytes(6),
+    <<G:8, B:8, R:8, I:8, T:16>> = Rand,
     Illum = (I * 100) div 255,
     ok = dotstar:write_dot(R, G, B, Illum),
-    timer:sleep(T),
+    timer:sleep(T div 64),
     random_loop().
-
