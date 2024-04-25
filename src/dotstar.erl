@@ -88,7 +88,6 @@ write_dot(Red, Green, Blue, Illumination) ->
 
 %% Based on atomvm_neopixel led_strip_hsv2rgb implementation, but less accurate and without floats.
 write_dot_hsv(H, S, V) ->
-    I = (V * 31) div 97,
     RGB_max = (V * 255) div 100,
     RGB_min = (RGB_max * (100 - S)) div 100,
     Diff = H rem 60,
@@ -103,4 +102,4 @@ write_dot_hsv(H, S, V) ->
             4 -> {RGB_min + RGB_adj, RGB_min, RGB_max};
             _ -> {RGB_max, RGB_min, RGB_max - RGB_adj}
         end,
-    write_dot(R, G, B, I).
+    write_dot(R, G, B, V).
