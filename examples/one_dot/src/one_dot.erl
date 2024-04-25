@@ -51,7 +51,7 @@ hsv_sweep(359, S, 100) ->
     dotstar:write_dot_hsv(359, S, 100),
     timer:sleep(?SLEEP_MS),
     ok;   
-hsv_sweep(259, S, V) ->
+hsv_sweep(359, S, V) ->
     dotstar:write_dot_hsv(359, S, V),
     timer:sleep(?SLEEP_MS),
     hsv_sweep(0, S, V + 2);
