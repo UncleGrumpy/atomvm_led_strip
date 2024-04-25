@@ -24,7 +24,7 @@
 
 -export([start/0]).
 
--define(SLEEP_MS, 0).
+-define(SLEEP_MS, 15).
 
 start() ->
     ok = dotstar:init(?LED_DI_PIN, ?LED_CI_PIN, ?TOTAL_DOTS),
@@ -47,12 +47,12 @@ fade_rgb(Red, Green, Blue, Illum) ->
     Fade = Illum - 1,
     fade_rgb(Red, Green, Blue, Fade).
 
-hsv_sweep(259, S, 100) ->
-    dotstar:write_dot_hsv(259, S, 100),
+hsv_sweep(359, S, 100) ->
+    dotstar:write_dot_hsv(359, S, 100),
     timer:sleep(?SLEEP_MS),
     ok;   
-hsv_sweep(359, S, V) ->
-    dotstar:write_dot_hsv(259, S, V),
+hsv_sweep(259, S, V) ->
+    dotstar:write_dot_hsv(359, S, V),
     timer:sleep(?SLEEP_MS),
     hsv_sweep(0, S, V + 2);
 hsv_sweep(H, S, V) ->
