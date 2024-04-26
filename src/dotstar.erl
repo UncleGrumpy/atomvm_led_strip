@@ -66,9 +66,9 @@ init(Di_pin, Ci_pin, Dots) ->
 write_dot(Red, Green, Blue, Illumination) ->
     %% fast and dirty way to convert 0-100 Illumination into 5-bit Brightness.
     Bright = (Illumination * 31) div 97,
+    {C1, C2, C3} = ?COLOR_ORDER,
     Dot_data =
-        <<?SPI_START_FRAME:32, ?ILUM_START_BITS:3, Bright:5, Blue:8, Green:8, Red:8,
-            ?SPI_END_FRAME:32>>,
+        <<?SPI_START_FRAME:32, ?ILUM_START_BITS:3, Bright:5, C1:8, C2:8, C3:8, ?SPI_END_FRAME:32>>,
     Transaction = #{
         command => 0, address => 0, write_data => Dot_data, write_bits => 96, read_bits => 0
     },
