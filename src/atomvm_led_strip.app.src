@@ -18,7 +18,7 @@
 % SPDX-License-Identifier: Apache-2.0 OR LGPL-2.1-or-later
 %
 
-{application, atomvm_dotstar, [
+{application, atomvm_led_strip, [
     {description, "Erlang AtomVM AP102 RGB LED Library"},
     {vsn, "0.1.0"},
     {registered, []},
