@@ -4,9 +4,9 @@
   SPDX-License-Identifier: Apache-2.0 OR LGPL-2.1-or-later
 -->
 
-# atomvm_dotstar
+# atomvm_led_strip
 
-Welcome to the atomvm_dotstar AtomVM AP102 library.
+Welcome to the atomvm_led_strip AtomVM AP102 library.
 
 This is an AtomVM native spi driver for the AP102 RGB LED written is pure Erlang.  This driver has been tested on the ESP32 platform, but should work on other microcontrollers, if an AtomVM SPI driver interface that supports `spi:write/3` transactions is added in the future.
 
